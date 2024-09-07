@@ -1,0 +1,40 @@
+{
+  "display_information": {
+    "name": "kyusyu-travel-weather-responser",
+    "description": "💴💴💴 メンションすると九州旅行中の天気を教えてくれるボットです！",
+    "background_color": "#4571f5"
+  },
+  "features": {
+    "bot_user": {
+      "display_name": "kyusyu-travel-weather-responser",
+      "always_online": false
+    }
+  },
+  "oauth_config": {
+    "redirect_urls": [
+      "https://localhost"
+    ],
+    "scopes": {
+      "user": [
+        "chat:write"
+      ],
+      "bot": [
+        "chat:write",
+        "incoming-webhook",
+        "app_mentions:read",
+        "channels:history"
+      ]
+    }
+  },
+  "settings": {
+    "event_subscriptions": {
+      "request_url": "<GASのウェブアプリURL>",
+      "bot_events": [
+        "app_mention"
+      ]
+    },
+    "org_deploy_enabled": false,
+    "socket_mode_enabled": false,
+    "token_rotation_enabled": true
+  }
+}
