@@ -7,12 +7,29 @@ import weatherCode2Emoji from './util/weatherCode2Emoji'
 import { testMentioned, testVerification } from './test'
 import { Istest } from './@types/IsTest'
 
-function main(e: GoogleAppsScript.Events.DoPost & Istest) {
+const mockEventPostData: GoogleAppsScript.Events.DoPost = {
+  postData: {
+    contents: JSON.stringify({}),
+    length: 0,
+    name: 'test',
+    type: 'test'
+  },
+  parameter: {},
+  parameters: {},
+  queryString: '',
+  pathInfo: '',
+  contextPath: '',
+  contentLength: 0,
+}
+
+function main(_e: GoogleAppsScript.Events.DoPost & Istest) {
   const properties = PropertiesService.getScriptProperties()
   const out = ContentService.createTextOutput()
   out.setMimeType(ContentService.MimeType.JSON)
 
-  const isProd = e.isTest === false
+  const e = _e ?? mockEventPostData
+
+  const isProd = e.isTest !== true
 
   const body = JSON.parse(e.postData.contents)
 
