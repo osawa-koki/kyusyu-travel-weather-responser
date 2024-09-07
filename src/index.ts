@@ -1,14 +1,35 @@
-import DateWeather from "./@types/DateWeather"
-import OpenMeteoDaily from "./@types/OpenMeteoDaily"
-import createWeatherContent from "./util/createWeatherContent"
-import sendSlackMessage from "./util/sendSlackMessage"
-import urlGenerator from "./util/urlGenerator"
-import weatherCode2Emoji from "./util/weatherCode2Emoji"
+import DateWeather from './@types/DateWeather'
+import OpenMeteoDaily from './@types/OpenMeteoDaily'
+import createWeatherContent from './util/createWeatherContent'
+import sendSlackMessage from './util/sendSlackMessage'
+import urlGenerator from './util/urlGenerator'
+import weatherCode2Emoji from './util/weatherCode2Emoji'
+import { testMentioned, testVerification } from './test'
+import { Istest } from './@types/IsTest'
 
-function main(e: GoogleAppsScript.Events.DoPost) {
+const mockEventPostData: GoogleAppsScript.Events.DoPost = {
+  postData: {
+    contents: JSON.stringify({}),
+    length: 0,
+    name: 'test',
+    type: 'test'
+  },
+  parameter: {},
+  parameters: {},
+  queryString: '',
+  pathInfo: '',
+  contextPath: '',
+  contentLength: 0,
+}
+
+function main(_e: GoogleAppsScript.Events.DoPost & Istest) {
   const properties = PropertiesService.getScriptProperties()
   const out = ContentService.createTextOutput()
   out.setMimeType(ContentService.MimeType.JSON)
+
+  const e = _e ?? mockEventPostData
+
+  const isProd = e.isTest !== true
 
   const body = JSON.parse(e.postData.contents)
 
@@ -68,13 +89,24 @@ function main(e: GoogleAppsScript.Events.DoPost) {
 
   const message = createWeatherContent({ dateWeathers: sortedDateWeatherSets })
 
-  sendSlackMessage(url, message)
+  if (isProd) {
+    sendSlackMessage(url, message)
+  }
+  out.setContent(JSON.stringify({
+    message: 'Success',
+    sentMessage: message
+  }))
 
   return out
 }
 
-declare let global: { doPost: (e: GoogleAppsScript.Events.DoPost) => void }
+declare let global: {
+  doPost: (e: GoogleAppsScript.Events.DoPost & Istest) => void
+  testVerification: () => void
+  testMentioned: () => void
+}
 global.doPost = main
+global.testVerification = testVerification
+global.testMentioned = testMentioned
 
 export default main
-

@@ -1,4 +1,4 @@
-import EmojiDescription from "../@types/EmojiDescription"
+import EmojiDescription from '../@types/EmojiDescription'
 
 interface WeatherCode2EmojiProps {
   weatherCode: number
