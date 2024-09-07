@@ -1,4 +1,9 @@
+import DateWeather from "./@types/DateWeather";
+import OpenMeteoDaily from "./@types/OpenMeteoDaily";
+import createWeatherContent from "./util/createWeatherContent";
 import sendSlackMessage from "./util/sendSlackMessage";
+import urlGenerator from "./util/urlGenerator";
+import weatherCode2Emoji from "./util/weatherCode2Emoji";
 
 function main(e) {
   const properties = PropertiesService.getScriptProperties();
@@ -22,9 +27,46 @@ function main(e) {
   }
 
   const url = properties.getProperty('SLACK_WEBHOOK_URL');
-  sendSlackMessage(url, 'hello world');
 
-  out.setContent(JSON.stringify({ message: 'OK' }));
+  const { datePlaces } = JSON.parse(properties.getProperty('DATE_PLACES')!)
+
+  const dateWeatherSets: DateWeather[] = []
+
+  for (const datePlace of datePlaces) {
+    const { date, latitude, longitude } = datePlace
+    const url = urlGenerator({ latitude, longitude })
+    const response = UrlFetchApp.fetch(url)
+    const json: OpenMeteoDaily = JSON.parse(response.getContentText())
+    const dates = json.daily.time
+    const index = dates.indexOf(date)
+    if (index === -1) {
+      Logger.log(`No data for ${date}`)
+      continue
+    }
+    const weatherCode = json.daily.weather_code[index]
+    const { emoji, description } = weatherCode2Emoji({ weatherCode })
+    dateWeatherSets.push({
+      date,
+      weather: {
+        emoji,
+        code: weatherCode,
+        description
+      },
+      place: {
+        latitude,
+        longitude
+      }
+    }
+    )
+    Logger.log(date, emoji, description)
+  }
+
+  const sortedDateWeatherSets = dateWeatherSets.sort((a, b) => a.date.localeCompare(b.date))
+
+  const message = createWeatherContent({ dateWeathers: sortedDateWeatherSets })
+
+  sendSlackMessage(url, message)
+
   return out;
 }
 
