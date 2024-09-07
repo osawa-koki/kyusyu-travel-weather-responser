@@ -5,7 +5,7 @@ export default function sendSlackMessage(url, message: string): GoogleAppsScript
     payload: JSON.stringify({
       text: message
     })
-  });
+  })
 
-  return response;
+  return response
 }
