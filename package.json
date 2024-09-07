@@ -7,6 +7,20 @@
   "author": "osawa-koki <koki@osawa.dev>",
   "license": "Apache-2.0",
   "private": false,
+  "type": "module",
+  "scripts": {
+    "build": "node ./build.js && cp ./src/*.json ./dist/",
+    "push": "clasp push",
+    "pull": "clasp pull",
+    "open": "clasp open",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "esbuild": "^0.23.1",
+    "esbuild-gas-plugin": "^0.8.0"
+  },
   "devDependencies": {
     "@types/google-apps-script": "^1.0.83"
   }
