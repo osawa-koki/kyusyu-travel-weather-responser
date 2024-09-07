@@ -30,7 +30,7 @@ function main(e: GoogleAppsScript.Events.DoPost) {
     return out
   }
 
-  const url = properties.getProperty('SLACK_WEBHOOK_URL')
+  const url = properties.getProperty('SLACK_WEBHOOK_URL')!
 
   const { datePlaces } = JSON.parse(properties.getProperty('DATE_PLACES')!)
 
