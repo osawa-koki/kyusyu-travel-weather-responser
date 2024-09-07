@@ -72,6 +72,8 @@ yarn open
 
 ![デプロイ](./deploy.png)  
 
+また、Slackアプリは`./app-manifest`を使って作成します。  
+
 ---
 
 `https://script.google.com/home/projects/<PROJECT_ID>/settings`へアクセスして、スクリプトのプロパティに以下のキーを設定します。  
