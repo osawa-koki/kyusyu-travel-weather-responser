@@ -5,7 +5,7 @@ import sendSlackMessage from "./util/sendSlackMessage";
 import urlGenerator from "./util/urlGenerator";
 import weatherCode2Emoji from "./util/weatherCode2Emoji";
 
-function main(e) {
+function main(e: GoogleAppsScript.Events.DoPost) {
   const properties = PropertiesService.getScriptProperties();
   const out = ContentService.createTextOutput();
   out.setMimeType(ContentService.MimeType.JSON);
@@ -13,15 +13,19 @@ function main(e) {
   const body = JSON.parse(e.postData.contents);
 
   if (body.type === 'url_verification') {
-    const secret = properties.getProperty('SLACK_VERIFICATION_SECRET');
-    if (e.parameter.secret !== secret) {
-      out.setContent(JSON.stringify({ message: 'Forbidden' }));
+    const { token: givenToken, challenge: givenChallenge } = body
+
+    const setToken = properties.getProperty('SLACK_VERIFICATION_TOKEN');
+    if (givenToken !== setToken) {
+      out.setContent(JSON.stringify({
+        message: 'Invalid token'
+      }));
       return out;
     }
-    const challenge = body.challenge;
+
     out.setContent(JSON.stringify({
       message: 'Verification',
-      challenge
+      challenge: givenChallenge
     }));
     return out;
   }
