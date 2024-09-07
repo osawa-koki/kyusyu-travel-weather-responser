@@ -1,36 +1,36 @@
-import DateWeather from "./@types/DateWeather";
-import OpenMeteoDaily from "./@types/OpenMeteoDaily";
-import createWeatherContent from "./util/createWeatherContent";
-import sendSlackMessage from "./util/sendSlackMessage";
-import urlGenerator from "./util/urlGenerator";
-import weatherCode2Emoji from "./util/weatherCode2Emoji";
+import DateWeather from "./@types/DateWeather"
+import OpenMeteoDaily from "./@types/OpenMeteoDaily"
+import createWeatherContent from "./util/createWeatherContent"
+import sendSlackMessage from "./util/sendSlackMessage"
+import urlGenerator from "./util/urlGenerator"
+import weatherCode2Emoji from "./util/weatherCode2Emoji"
 
 function main(e: GoogleAppsScript.Events.DoPost) {
-  const properties = PropertiesService.getScriptProperties();
-  const out = ContentService.createTextOutput();
-  out.setMimeType(ContentService.MimeType.JSON);
+  const properties = PropertiesService.getScriptProperties()
+  const out = ContentService.createTextOutput()
+  out.setMimeType(ContentService.MimeType.JSON)
 
-  const body = JSON.parse(e.postData.contents);
+  const body = JSON.parse(e.postData.contents)
 
   if (body.type === 'url_verification') {
     const { token: givenToken, challenge: givenChallenge } = body
 
-    const setToken = properties.getProperty('SLACK_VERIFICATION_TOKEN');
+    const setToken = properties.getProperty('SLACK_VERIFICATION_TOKEN')
     if (givenToken !== setToken) {
       out.setContent(JSON.stringify({
         message: 'Invalid token'
-      }));
-      return out;
+      }))
+      return out
     }
 
     out.setContent(JSON.stringify({
       message: 'Verification',
       challenge: givenChallenge
-    }));
-    return out;
+    }))
+    return out
   }
 
-  const url = properties.getProperty('SLACK_WEBHOOK_URL');
+  const url = properties.getProperty('SLACK_WEBHOOK_URL')!
 
   const { datePlaces } = JSON.parse(properties.getProperty('DATE_PLACES')!)
 
@@ -60,8 +60,7 @@ function main(e: GoogleAppsScript.Events.DoPost) {
         latitude,
         longitude
       }
-    }
-    )
+    })
     Logger.log(date, emoji, description)
   }
 
@@ -71,10 +70,10 @@ function main(e: GoogleAppsScript.Events.DoPost) {
 
   sendSlackMessage(url, message)
 
-  return out;
+  return out
 }
 
-declare let global: { doPost: (e: any) => void }
+declare let global: { doPost: (e: GoogleAppsScript.Events.DoPost) => void }
 global.doPost = main
 
 export default main
