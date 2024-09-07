@@ -1,12 +1,13 @@
+import sendSlackMessage from "./util/sendSlackMessage";
 
-function doPost(e) {
+function main(e) {
   const properties = PropertiesService.getScriptProperties();
   const out = ContentService.createTextOutput();
   out.setMimeType(ContentService.MimeType.JSON);
 
   const body = JSON.parse(e.postData.contents);
 
-  if (e.parameter.type === 'url_verification') {
+  if (body.type === 'url_verification') {
     const secret = properties.getProperty('SLACK_VERIFICATION_SECRET');
     if (e.parameter.secret !== secret) {
       out.setContent(JSON.stringify({ message: 'Forbidden' }));
@@ -20,8 +21,15 @@ function doPost(e) {
     return out;
   }
 
-  const challenge = body.challenge;
-  out.setContent(JSON.stringify({ message: 'OK', challenge }));
+  const url = properties.getProperty('SLACK_WEBHOOK_URL');
+  sendSlackMessage(url, 'hello world');
+
+  out.setContent(JSON.stringify({ message: 'OK' }));
   return out;
 }
+
+declare let global: { doPost: (e: any) => void }
+global.doPost = main
+
+export default main
 
