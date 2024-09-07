@@ -1,0 +1,13 @@
+{
+  "name": "kyusyu-travel-weather-responser",
+  "version": "1.0.0",
+  "description": "💴💴💴 メンションすると九州旅行中の天気を教えてくれるボットです！",
+  "main": "./src/index.ts",
+  "repository": "https://github.com/osawa-koki/kyusyu-travel-weather-responser.git",
+  "author": "osawa-koki <koki@osawa.dev>",
+  "license": "Apache-2.0",
+  "private": false,
+  "devDependencies": {
+    "@types/google-apps-script": "^1.0.83"
+  }
+}
